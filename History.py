@@ -11,26 +11,25 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 global answer ,situacionPrimera
 
-situaciones = [("nombre","comentario",["]),(),()]
-Decisiones = []
+situaciones = [("nombre","comentario",["Hamburguesa","Pizza","Papas"],"./sound/prueba.wav")]
+decisiones = [("nombre2","./sound/prueba.wav")]
 
 def cargarHistoria():
-    global answer ,situacionPrimera
+    global answer
     historia = GrafoDeHistoria()
-    nombre = 'prueba1'
-    situacionPrimera = nodoGrafoSituacion(nombre)
-    comentar = "¿Que le gusta Comer?"
-    situacionPrimera.comentario(comentar)
-    sonido = "./sound/prueba.wav"
-    situacionPrimera.agregarSonido(sonido)
-    uno= 'pizza'
-    dos= 'Hamburguesa'
-    tres = 'Salchipapa'
-    situacionPrimera.agregarDecision(uno)
-    situacionPrimera.agregarDecision(dos)
-    situacionPrimera.agregarDecision(tres)
-    situacionPrimera.expoUi()
-
+    for i in situaciones:
+        situacion = nodoGrafoSituacion(i[0])
+        situacion.comentario(i[1])
+        for x in i[2]:situacion.agregarDecision(x)
+        situacion.agregarSonido(i[3])
+        historia.agregarVertice(i[0])
+        historia.agregarArco(i[0],situacion)
+    for j in decisiones:
+        decision = nodoGrafoDecision(j[0])
+        decision.agregarSonido(j[1])
+        historia.agregarVertice(j[0])
+        historia.agregarArco(j[0],decision)
+    print(historia)
 
 
 
@@ -74,6 +73,8 @@ class GrafoDeHistoria:
             return self.grafo[vertice]
         except KeyError:
             print("Error")
+    def __str__(self):
+        return "grafo{0}".format(self.grafo)
 
 
 class nodoGrafoSituacion:
@@ -91,6 +92,8 @@ class nodoGrafoSituacion:
         self.decisiones.append(decision)
     def nodoFinal(self):
         self.nodoHoja = True
+    def nombre(self):
+        return self.nombre
 
     def agregarSonido(self,sonido):
         self.audio=oalOpen(sonido)
@@ -124,6 +127,8 @@ class nodoGrafoDecision:
         self.audio = ""
     def agregarSonido(self,sonido):
         self.audio= oalOpen(sonido)
+    def nombre(self):
+        return self.nombre
     def reproducirSonido(self):
         try:
             self.audio.play()
@@ -200,30 +205,20 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Opcion:"))
 
 def botonA():
-
+    global answer
     answer = 'a'
-
-    print("erda")
 def botonB():
-    global answer ,situacionPrimera
+    global answer
     answer = 'b'
-    situacionPrimera.reproducirSonido()
 def botonC():
     global answer
     answer = 'c'
 def botonD():
     global answer
     answer = 'd'
-
 def continuar():
     global answer
     answer = ''
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
