@@ -9,14 +9,16 @@ import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-global answer ,situacionPrimera
+global answer ,historia
 
-situaciones = [("nombre","comentario",["Hamburguesa","Pizza","Papas"],"./sound/prueba.wav")]
-decisiones = [("nombre2","./sound/prueba.wav")]
+situaciones = [("Despertarse","Amanece y te despierta, que vas hacer despues?",["Ducharse","Desayunar","Cepillarse"],"./sound/1-amanecer.wav")]
+decisiones = [("Ducharse","./sound/2-ducharse.wav",""),("Desayunar","./sound/3-desayuno.wav",""),("Cepillarse","./sound/4-cepillarse.wav","")]
 
 def cargarHistoria():
-    global answer
+    global answer, historia
     historia = GrafoDeHistoria()
+
+    #Agregar Vertices
     for i in situaciones:
         situacion = nodoGrafoSituacion(i[0])
         situacion.comentario(i[1])
@@ -29,7 +31,16 @@ def cargarHistoria():
         decision.agregarSonido(j[1])
         historia.agregarVertice(j[0])
         historia.agregarArco(j[0],decision)
-    print(historia)
+    #Relacionar Vertices
+
+    for i in situaciones:
+        for j in i[2]:
+            nodo = historia.conseguirArco(i[0])
+            nodo.append(j)
+    for k in decisiones:
+        nodo = historia.conseguirArco(k[0])
+        nodo.append(k[2])
+
 
 
 
@@ -223,7 +234,7 @@ def continuar():
 
 if __name__ == "__main__":
     import sys
-    global answer
+    global answer, historia
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
@@ -237,6 +248,7 @@ if __name__ == "__main__":
 
     ##Seccion se llena el arbol con la historia
     cargarHistoria()
+    print(historia)
     #while Historia.end() != True:
 
 
