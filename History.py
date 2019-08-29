@@ -11,8 +11,28 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 global answer ,historia
 
-situaciones = [("Despertarse","Amanece y te despierta, que vas hacer despues?",["Ducharse","Desayunar","Cepillarse"],"./sound/1-amanecer.wav")]
-decisiones = [("Ducharse","./sound/2-ducharse.wav",""),("Desayunar","./sound/3-desayuno.wav",""),("Cepillarse","./sound/4-cepillarse.wav","")]
+situaciones = [("Despertarse","Te despiertas, que vas hacer despues?",["Ducharse","Desayunar","Cepillarse"],"./sound/1-amanecer.wav")
+               ,("Salir de casa","Sales de la casa y decides:",["Ir a la estacion","Tomar un taxi","Caminar"],"./sound/1-amanecer.wav"),
+               ("Afuera del casino","Estas afuera del casino.",[],"./sound/1-amanecer.wav"),
+               ("Entrar al casino","Entras al casino que vas hacer:",["Jugar traga monedas","Pedir bebida","Salir"],"./sound/1-amanecer.wav"),
+               ("Ir a casa","como te vas a ir a tu casa:",["Ir a la estacion de buses","Pedir un taxi","Ir caminando"],"./sound/1-amanecer.wav"),
+               ("fin","Termino el juego",[],"./sound/4-cepillarse.wav"),
+               ("Abrir Puerta","Llegas a tu casa y procedes a:",["Dormir"],"./sound/1-amanecer.wav")
+              ]
+decisiones = [("Ducharse","./sound/2-ducharse.wav","Salir de casa"),
+              ("Desayunar","./sound/3-desayuno.wav","Salir de casa"),
+              ("Cepillarse","./sound/4-cepillarse.wav","Salir de casa"),
+              ("Ir a la estacion","./sound/5-irEstacion.wav","Afuera del casino"),
+              ("Tomar un taxi","./sound/6-Taxi.wav","Afuera del casino"),
+              ("Caminar","./sound/7-caminar.wav","Afuera del casino"),
+              ("Jugar traga monedas","./sound/4-cepillarse.wav","fin"),
+              ("Pedir bebida","./sound/4-cepillarse.wav","fin"),
+              ("Salir","./sound/4-cepillarse.wav","Ir a casa"),
+              ("Esperar en una parada de buses","./sound/5-irEstacion.wav","Abrir Puerta"),
+              ("Pedir un taxi","./sound/6-Taxi.wav","Abrir Puerta"),
+              ("Ir caminando","./sound/7-caminar.wav","Abrir Puerta"),
+              ("Dormir","./sound/4-cepillarse.wav","fin")
+              ]
 
 def cargarHistoria():
     global answer, historia
@@ -105,14 +125,19 @@ class nodoGrafoSituacion:
         self.nodoHoja = True
     def nombre(self):
         return self.nombre
-
+    def decision(self):
+        return self.decisiones
     def agregarSonido(self,sonido):
-        self.audio=oalOpen(sonido)
+        self.audio= sonido
     def reproducirSonido(self):
         try:
-            self.audio.play()
-            while self.audio.get_state() == AL_PLAYING:
-	               time.sleep(0)
+            source = oalOpen(self.audio)
+            source.play()
+            while source.get_state() == AL_PLAYING:
+                   ui.label_2.setEnabled(True)
+                   time.sleep(0)
+
+            ui.label_2.setEnabled(False)
             oalQuit()
         except KeyError:
             print("Error")
@@ -122,29 +147,43 @@ class nodoGrafoSituacion:
             dec += self.Nm[i] + self.decisiones[i]+".\n"
         print(dec)
         ui.label.setText(self.comentario+"\n\n"+dec)
-        for i in range(4):
-            if(i<len(self.decisiones)):
-                self.bloq[i] = True
-            else:
-                self.bloq[i] = False
-        ui.pushButton.setEnabled(self.bloq[0])
-        ui.pushButton_2.setEnabled(self.bloq[1])
-        ui.pushButton_3.setEnabled(self.bloq[2])
-        ui.pushButton_4.setEnabled(self.bloq[3])
+        if(len(self.decisiones)!=0):
+            for i in range(4):
+                if(i<len(self.decisiones)):
+                    self.bloq[i] = True
+                else:
+                    self.bloq[i] = False
+            ui.pushButton.setEnabled(self.bloq[0])
+            ui.pushButton_2.setEnabled(self.bloq[1])
+            ui.pushButton_3.setEnabled(self.bloq[2])
+            ui.pushButton_4.setEnabled(self.bloq[3])
+            ui.pushButton_5.setEnabled(False)
+        else:
+            ui.pushButton.setEnabled(False)
+            ui.pushButton_2.setEnabled(False)
+            ui.pushButton_3.setEnabled(False)
+            ui.pushButton_4.setEnabled(False)
+            ui.pushButton_5.setEnabled(True)
+
+
 
 class nodoGrafoDecision:
     def __init__(self,nom):
         self.nombre = nom
         self.audio = ""
     def agregarSonido(self,sonido):
-        self.audio= oalOpen(sonido)
+        self.audio= sonido
     def nombre(self):
         return self.nombre
     def reproducirSonido(self):
         try:
-            self.audio.play()
+            source = oalOpen(self.audio)
+            source.play()
             while source.get_state() == AL_PLAYING:
-	               time.sleep(0)
+                   ui.label_2.setEnabled(True)
+                   time.sleep(0)
+
+            ui.label_2.setEnabled(False)
             oalQuit()
         except KeyError:
             print("Error")
@@ -161,7 +200,7 @@ class Ui_MainWindow(object):
         self.groupBox.setGeometry(QtCore.QRect(10, 30, 231, 281))
         self.groupBox.setObjectName("groupBox")
         self.label = QtWidgets.QLabel(self.groupBox)
-        self.label.setGeometry(QtCore.QRect(0, 20, 131, 101))
+        self.label.setGeometry(QtCore.QRect(0, 20, 4000, 101))
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setEnabled(False)
@@ -216,20 +255,47 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Opcion:"))
 
 def botonA():
-    global answer
-    answer = 'a'
+    global answer, historia,nodoActual
+    answer = 1
+    deci = nodoActual[answer]
+    nodoActual = historia.conseguirArco(deci)
+    nodoActual[0].reproducirSonido()
+    update(nodoActual[1])
 def botonB():
-    global answer
-    answer = 'b'
+    global answer, historia, nodoActual
+    answer = 2
+    deci = nodoActual[answer]
+    nodoActual = historia.conseguirArco(deci)
+    nodoActual[0].reproducirSonido()
+    update(nodoActual[1])
 def botonC():
-    global answer
-    answer = 'c'
+    global answer, historia,nodoActual
+    answer = 3
+    deci = nodoActual[answer]
+    nodoActual = historia.conseguirArco(deci)
+    nodoActual[0].reproducirSonido()
+    update(nodoActual[1])
 def botonD():
-    global answer
-    answer = 'd'
+    global answer, historia,nodoActual
+    answer = 4
+    deci = nodoActual.decision()
+    nodoActual = historia.conseguirArco(deci[answer])
+    nodoActual[0].reproducirSonido()
+    update(nodoActual[1])
 def continuar():
-    global answer
+    global answer, historia, nodoActual
     answer = ''
+    deci = nodoActual.decision()
+    nodoActual = historia.conseguirArco(deci[answer])
+    update(nodoActual[1])
+
+
+def update(name):
+    global answer, historia, nodoActual
+    nodoActual = historia.conseguirArco(name)
+    nodoActual[0].reproducirSonido()
+    nodoActual[0].expoUi()
+
 
 
 if __name__ == "__main__":
@@ -240,7 +306,6 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    answer= ""
     ui.pushButton.clicked.connect(botonA)
     ui.pushButton_2.clicked.connect(botonB)
     ui.pushButton_3.clicked.connect(botonC)
@@ -248,7 +313,9 @@ if __name__ == "__main__":
 
     ##Seccion se llena el arbol con la historia
     cargarHistoria()
-    print(historia)
+    update("Despertarse")
+
+
     #while Historia.end() != True:
 
 
