@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openal import *
 import time
+import threading
 # Form implementation generated from reading ui file 'History.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
@@ -33,6 +34,20 @@ decisiones = [("Ducharse","./sound/2-ducharse.wav","Salir de casa"),
               ("Ir caminando","./sound/7-caminar.wav","Abrir Puerta"),
               ("Dormir","./sound/4-cepillarse.wav","fin")
               ]
+
+def reproducir(source,nodo):
+    nodo.expoUi()
+    nodo.bloquear()
+    source.play()
+    while source.get_state() == AL_PLAYING:
+           ui.label_2.setEnabled(True)
+           time.sleep(0)
+    ui.label_2.setEnabled(False)
+    oalQuit()
+    nodoActual[0].habilitar()
+
+
+
 
 def cargarHistoria():
     global answer, historia
@@ -132,13 +147,8 @@ class nodoGrafoSituacion:
     def reproducirSonido(self):
         try:
             source = oalOpen(self.audio)
-            source.play()
-            while source.get_state() == AL_PLAYING:
-                   ui.label_2.setEnabled(True)
-                   time.sleep(0)
+            return source
 
-            ui.label_2.setEnabled(False)
-            oalQuit()
         except KeyError:
             print("Error")
     def expoUi(self):
@@ -165,6 +175,28 @@ class nodoGrafoSituacion:
             ui.pushButton_4.setEnabled(False)
             ui.pushButton_5.setEnabled(True)
 
+    def habilitar(self):
+        if(len(self.decisiones)!=0):
+            ui.pushButton.setEnabled(self.bloq[0])
+            ui.pushButton_2.setEnabled(self.bloq[1])
+            ui.pushButton_3.setEnabled(self.bloq[2])
+            ui.pushButton_4.setEnabled(self.bloq[3])
+            ui.pushButton_5.setEnabled(False)
+        else:
+            ui.pushButton.setEnabled(False)
+            ui.pushButton_2.setEnabled(False)
+            ui.pushButton_3.setEnabled(False)
+            ui.pushButton_4.setEnabled(False)
+            ui.pushButton_5.setEnabled(True)
+
+    def bloquear(self):
+        ui.pushButton.setEnabled(False)
+        ui.pushButton_2.setEnabled(False)
+        ui.pushButton_3.setEnabled(False)
+        ui.pushButton_4.setEnabled(False)
+        ui.pushButton_5.setEnabled(False)
+
+
 
 
 class nodoGrafoDecision:
@@ -182,9 +214,11 @@ class nodoGrafoDecision:
             while source.get_state() == AL_PLAYING:
                    ui.label_2.setEnabled(True)
                    time.sleep(0)
-
             ui.label_2.setEnabled(False)
             oalQuit()
+            return source
+
+
         except KeyError:
             print("Error")
 
@@ -203,7 +237,7 @@ class Ui_MainWindow(object):
         self.label.setGeometry(QtCore.QRect(0, 20, 4000, 101))
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setEnabled(False)
+        self.label_2.setEnabled(True)
         self.label_2.setGeometry(QtCore.QRect(320, 230, 51, 41))
         self.label_2.setMaximumSize(QtCore.QSize(10000000, 16777215))
         self.label_2.setText("")
@@ -265,6 +299,7 @@ def botonB():
     global answer, historia, nodoActual
     answer = 2
     deci = nodoActual[answer]
+
     nodoActual = historia.conseguirArco(deci)
     nodoActual[0].reproducirSonido()
     update(nodoActual[1])
@@ -293,8 +328,15 @@ def continuar():
 def update(name):
     global answer, historia, nodoActual
     nodoActual = historia.conseguirArco(name)
-    nodoActual[0].reproducirSonido()
-    nodoActual[0].expoUi()
+
+    t = threading.Thread(target=reproducir, args=(nodoActual[0].reproducirSonido(),nodoActual[0],))
+    t.start()
+
+
+
+
+
+
 
 
 
