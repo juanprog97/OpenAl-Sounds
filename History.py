@@ -2,6 +2,7 @@
 from openal import *
 import time
 import threading
+
 # Form implementation generated from reading ui file 'History.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
@@ -9,6 +10,7 @@ import threading
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 global answer ,historia
 
@@ -22,7 +24,7 @@ situaciones = [("Despertarse","Te despiertas, que vas hacer despues?",["Ducharse
               ]
 decisiones = [("Ducharse","./sound/2-ducharse.wav","Salir de casa"),
               ("Desayunar","./sound/3-desayuno.wav","Salir de casa"),
-              ("Cepillarse","./sound/4-cepillarse.wav","Salir de casa"),
+              ("Cepillarse","./sound/prueba.wav","Salir de casa"),
               ("Ir a la estacion","./sound/5-irEstacion.wav","Afuera del casino"),
               ("Tomar un taxi","./sound/6-Taxi.wav","Afuera del casino"),
               ("Caminar","./sound/7-caminar.wav","Afuera del casino"),
@@ -41,6 +43,10 @@ def reproducir(source,nodo):
     source.play()
     while source.get_state() == AL_PLAYING:
            ui.label_2.setEnabled(True)
+           for x in range(20):
+               for y in range(20):
+                   z= 4*x**2+y**2
+                   source.set_position((x,y,z))
            time.sleep(0)
     ui.label_2.setEnabled(False)
     oalQuit()
@@ -209,11 +215,24 @@ class nodoGrafoDecision:
         return self.nombre
     def reproducirSonido(self):
         try:
+
             source = oalOpen(self.audio)
+            xPosition = 8
             source.play()
+            source.set_position((xPosition,0,2))
             while source.get_state() == AL_PLAYING:
                    ui.label_2.setEnabled(True)
-                   time.sleep(0)
+                   xPosition-=0.02
+                   print(xPosition)
+                   source.set_position((xPosition,0,-2))
+                   time.sleep(0.005)
+
+
+
+
+
+
+
             ui.label_2.setEnabled(False)
             oalQuit()
             return source
