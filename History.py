@@ -2,7 +2,7 @@
 from openal import *
 import time
 import threading
-
+import random
 # Form implementation generated from reading ui file 'History.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
@@ -13,7 +13,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 global answer ,historia
-
+sit = ["./sound/11.3-Ganar.wav","./soudn/12.3-Perder.wav"]
+decision = sit[random.randint(0, 1)]
 situaciones = [("Despertarse","Te despiertas, que vas hacer despues?",["Ducharse","Desayunar","Cepillarse"],[("./sound/1.1-amanecer.wav",(-3,1,0)),("./sound/1.2-amanecer.wav",(1,-2,0))])
                ,("Salir de casa","Sales de la casa y decides:",["Ir a la estacion","Tomar un taxi","Caminar"],[("./sound/0-salirDeCasa.wav",(1,2,3))]),
                ("Afuera del casino","Estas afuera del casino.",["Seguir"],[("./sound/8.1-esperandoAFueraCasino.wav",(1,1,3)),("./sound/8.2-esperandoAFueraCasino.wav",(1,1,-3))]),
@@ -30,8 +31,8 @@ decisiones = [("Ducharse",[("./sound/2.1-ducharse.wav",(0,3,1)),("./sound/2.2-du
               ("Ir a la estacion",[("./sound/5.1-irEstacion.wav",(0,0,0)),("./sound/5.2-irEstacion.wav",(2,0,0)),("./sound/5.3-irEstacion.wav",(-2,0,0))],"Afuera del casino"),
               ("Tomar un taxi",[("./sound/6.1-Taxi.wav",(2,0,1)),("./sound/6.2-Taxi.wav",(0,0,3)),("./sound/6.3-Taxi.wav",(-2,0,3))],"Afuera del casino"),
               ("Caminar",[("./sound/7.1-caminar.wav",(3,0,-2)),("./sound/7.2-caminar.wav",(0,0,1)),("./sound/7.3-caminar.wav",(-2,1,2))],"Afuera del casino"),
-              ("Jugar traga monedas",[("./sound/10.1-jugarTragaMonedas.wav",(2,0,-3)),("./sound/10.2-jugarTragaMonedas.wav",(0,2,0)),("./sound/10.3-jugarTragaMonedas.wav",(0,0,0))],"fin"),
-              ("Pedir bebida",[("./sound/13.1-PedirBebida.wav",(4,0,-2)),("./sound/13.2-PedirBebida.wav",(0,2,0)),("./sound/13.3-PedirBebida.wav",(0,0,0))],"fin"),
+              ("Jugar traga monedas",[("./sound/10.1-jugarTragaMonedas.wav",(2,0,-3)),("./sound/10.2-jugarTragaMonedas.wav",(0,2,0)),("./sound/10.3-jugarTragaMonedas.wav",(0,0,0)),(decision,(0,0,6))],"Ir a casa"),
+              ("Pedir bebida",[("./sound/13.1-PedirBebida.wav",(4,0,-2)),("./sound/13.2-PedirBebida.wav",(0,2,0)),("./sound/13.3-PedirBebida.wav",(0,0,0))],"Ir a casa"),
               ("Salir",[("./sound/14.1-AbrirPuerta.wav",(0,0,0)),("./sound/8.2-esperandoAFueraCasino.wav",(0,0,4))],"Ir a casa"),
               ("Esperar en una parada de buses",["./sound/5.1-irEstacion.wav","./sound/5.2-irEstacion.wav","./sound/5.3-irEstacion.wav"],"Abrir Puerta"),
               ("Pedir un taxi",[("./sound/6.1-Taxi.wav",(2,0,1)),("./sound/6.2-Taxi.wav",(0,0,3)),("./sound/6.3-Taxi.wav",(-2,0,3))],"Abrir Puerta"),
@@ -392,6 +393,7 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    MainWindow.setWindowTitle("Sound History")
     MainWindow.show()
     ui.pushButton.clicked.connect(botonA)
     ui.pushButton_2.clicked.connect(botonB)
