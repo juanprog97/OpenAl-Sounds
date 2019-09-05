@@ -14,45 +14,57 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 global answer ,historia
 
-situaciones = [("Despertarse","Te despiertas, que vas hacer despues?",["Ducharse","Desayunar","Cepillarse"],"./sound/1-amanecer.wav")
-               ,("Salir de casa","Sales de la casa y decides:",["Ir a la estacion","Tomar un taxi","Caminar"],"./sound/1-amanecer.wav"),
-               ("Afuera del casino","Estas afuera del casino.",[],"./sound/1-amanecer.wav"),
-               ("Entrar al casino","Entras al casino que vas hacer:",["Jugar traga monedas","Pedir bebida","Salir"],"./sound/1-amanecer.wav"),
-               ("Ir a casa","como te vas a ir a tu casa:",["Ir a la estacion de buses","Pedir un taxi","Ir caminando"],"./sound/1-amanecer.wav"),
-               ("fin","Termino el juego",[],"./sound/4-cepillarse.wav"),
-               ("Abrir Puerta","Llegas a tu casa y procedes a:",["Dormir"],"./sound/1-amanecer.wav")
-              ]
-decisiones = [("Ducharse","./sound/2-ducharse.wav","Salir de casa"),
-              ("Desayunar","./sound/3-desayuno.wav","Salir de casa"),
-              ("Cepillarse","./sound/prueba.wav","Salir de casa"),
-              ("Ir a la estacion","./sound/5-irEstacion.wav","Afuera del casino"),
-              ("Tomar un taxi","./sound/6-Taxi.wav","Afuera del casino"),
-              ("Caminar","./sound/7-caminar.wav","Afuera del casino"),
-              ("Jugar traga monedas","./sound/4-cepillarse.wav","fin"),
-              ("Pedir bebida","./sound/4-cepillarse.wav","fin"),
-              ("Salir","./sound/4-cepillarse.wav","Ir a casa"),
-              ("Esperar en una parada de buses","./sound/5-irEstacion.wav","Abrir Puerta"),
-              ("Pedir un taxi","./sound/6-Taxi.wav","Abrir Puerta"),
-              ("Ir caminando","./sound/7-caminar.wav","Abrir Puerta"),
-              ("Dormir","./sound/4-cepillarse.wav","fin")
+situaciones = [("Despertarse","Te despiertas, que vas hacer despues?",["Ducharse","Desayunar","Cepillarse"],[("./sound/1.1-amanecer.wav",(-3,1,0)),("./sound/1.2-amanecer.wav",(1,-2,0))])
+               ,("Salir de casa","Sales de la casa y decides:",["Ir a la estacion","Tomar un taxi","Caminar"],[("./sound/0-salirDeCasa.wav",(1,2,3))]),
+               ("Afuera del casino","Estas afuera del casino.",["Seguir"],[("./sound/8.1-esperandoAFueraCasino.wav",(1,1,3)),("./sound/8.2-esperandoAFueraCasino.wav",(1,1,-3))]),
+               ("Entrar al casino","Entras al casino que vas hacer:",["Jugar traga monedas","Pedir bebida","Salir"],[("./sound/9.1-Entraralcasino.wav",(-2,1,0)),("./sound/9.2-Entraralcasino.wav",(1,3,0))]),
+               ("Ir a casa","como te vas a ir a tu casa:",["Ir a la estacion de buses","Pedir un taxi","Ir caminando"],[("./sound/8.2-esperandoAFueraCasino.wav",(0,0,3))]),
+               ("fin","Termino el juego",[],[]),
+               ("Abrir Puerta","Llegas a tu casa y procedes a:",["Dormir"],[("./sound/14.1-AbrirPuerta.wav",(0,0,0)),("./sound/14.2-AbrirPuerta.wav",(0,0,-2))])
               ]
 
-def reproducir(source,nodo):
+
+decisiones = [("Ducharse",[("./sound/2.1-ducharse.wav",(0,3,1)),("./sound/2.2-ducharse.wav",(0,0,0))],"Salir de casa"),
+              ("Desayunar",[("./sound/3-desayuno.wav",(0,0,3))],"Salir de casa"),
+              ("Cepillarse",[("./sound/4-cepillarse.wav",(0,0,2))],"Salir de casa"),
+              ("Ir a la estacion",[("./sound/5.1-irEstacion.wav",(0,0,0)),("./sound/5.2-irEstacion.wav",(2,0,0)),("./sound/5.3-irEstacion.wav",(-2,0,0))],"Afuera del casino"),
+              ("Tomar un taxi",[("./sound/6.1-Taxi.wav",(2,0,1)),("./sound/6.2-Taxi.wav",(0,0,3)),("./sound/6.3-Taxi.wav",(-2,0,3))],"Afuera del casino"),
+              ("Caminar",[("./sound/7.1-caminar.wav",(3,0,-2)),("./sound/7.2-caminar.wav",(0,0,1)),("./sound/7.3-caminar.wav",(-2,1,2))],"Afuera del casino"),
+              ("Jugar traga monedas",[("./sound/10.1-jugarTragaMonedas.wav",(2,0,-3)),("./sound/10.2-jugarTragaMonedas.wav",(0,2,0)),("./sound/10.3-jugarTragaMonedas.wav",(0,0,0))],"fin"),
+              ("Pedir bebida",[("./sound/13.1-PedirBebida.wav",(4,0,-2)),("./sound/13.2-PedirBebida.wav",(0,2,0)),("./sound/13.3-PedirBebida.wav",(0,0,0))],"fin"),
+              ("Salir",[("./sound/14.1-AbrirPuerta.wav",(0,0,0)),("./sound/8.2-esperandoAFueraCasino.wav",(0,0,4))],"Ir a casa"),
+              ("Esperar en una parada de buses",["./sound/5.1-irEstacion.wav","./sound/5.2-irEstacion.wav","./sound/5.3-irEstacion.wav"],"Abrir Puerta"),
+              ("Pedir un taxi",[("./sound/6.1-Taxi.wav",(2,0,1)),("./sound/6.2-Taxi.wav",(0,0,3)),("./sound/6.3-Taxi.wav",(-2,0,3))],"Abrir Puerta"),
+              ("Ir caminando",[("./sound/7.1-caminar.wav",(-2,0,2)),("./sound/7.3-caminar.wav",(0,0,0))],"Abrir Puerta"),
+              ("Dormir",[("./sound/15.1-Domir.wav",(0,2,0)),("./sound/15.2-Domir.wav",(0,0,-2))],"fin"),
+              ("Seguir",[("./sound/pass.wav",(0,0,0))],"Entrar al casino")
+              ]
+
+global fin
+
+def simpleRepro(nodo, position):
+    nodo.set_position(position)
+    nodo.play()
+
+def reproducir(source,nodo,position):
     nodo.expoUi()
     nodo.bloquear()
-    source.play()
-    while source.get_state() == AL_PLAYING:
-           ui.label_2.setEnabled(True)
-           for x in range(20):
-               for y in range(20):
-                   z= 4*x**2+y**2
-                   source.set_position((x,y,z))
-           time.sleep(0)
-    ui.label_2.setEnabled(False)
-    oalQuit()
-    nodoActual[0].habilitar()
+    if(fin!=1):
+        for j in range(len(source)):
+            t = threading.Thread(target=simpleRepro, args=(source[j],position[j]))
+            t.start()
+            time.sleep(1)
 
+        while source[0].get_state() == AL_PLAYING:
+                ui.label_2.setEnabled(True)
+        #        for x in range(20):
+        #            for y in range(20):
+        #                z= 4*x**2+y**2
+        #                source.set_position((x,y,z))
+                time.sleep(0)
+        ui.label_2.setEnabled(False)
 
+        nodoActual[0].habilitar()
 
 
 def cargarHistoria():
@@ -152,12 +164,17 @@ class nodoGrafoSituacion:
         self.audio= sonido
     def reproducirSonido(self):
         try:
-            source = oalOpen(self.audio)
-            return source
+            sources = []
+            position = []
+            for i in range(len(self.audio)):
+                sources.append(oalOpen(self.audio[i][0]))
+                position.append(self.audio[i][1])
+            return sources,position
 
         except KeyError:
             print("Error")
     def expoUi(self):
+        global fin
         dec = ""
         for i in range(len(self.decisiones)):
             dec += self.Nm[i] + self.decisiones[i]+".\n"
@@ -175,11 +192,8 @@ class nodoGrafoSituacion:
             ui.pushButton_4.setEnabled(self.bloq[3])
             ui.pushButton_5.setEnabled(False)
         else:
-            ui.pushButton.setEnabled(False)
-            ui.pushButton_2.setEnabled(False)
-            ui.pushButton_3.setEnabled(False)
-            ui.pushButton_4.setEnabled(False)
-            ui.pushButton_5.setEnabled(True)
+            fin = 1
+
 
     def habilitar(self):
         if(len(self.decisiones)!=0):
@@ -215,17 +229,21 @@ class nodoGrafoDecision:
         return self.nombre
     def reproducirSonido(self):
         try:
+            sources = []
+            for i in range(len(self.audio)):
+                sources.append(oalOpen(self.audio[i][0]))
 
-            source = oalOpen(self.audio)
-            xPosition = 8
-            source.play()
-            source.set_position((xPosition,0,2))
-            while source.get_state() == AL_PLAYING:
-                   ui.label_2.setEnabled(True)
-                   xPosition-=0.02
-                   print(xPosition)
-                   source.set_position((xPosition,0,-2))
-                   time.sleep(0.005)
+            for j in range(len(sources)):
+                t = threading.Thread(target=simpleRepro, args=(sources[j],self.audio[j][1]))
+                t.start()
+                time.sleep(1)
+
+            while sources[0].get_state() == AL_PLAYING:
+                    ui.label_2.setEnabled(True)
+            #        xPosition-=0.02
+            #        print(xPosition)
+            #        source.set_position((xPosition,0,-2))
+            #        time.sleep(0.005)
 
 
 
@@ -234,8 +252,7 @@ class nodoGrafoDecision:
 
 
             ui.label_2.setEnabled(False)
-            oalQuit()
-            return source
+            return sources
 
 
         except KeyError:
@@ -339,17 +356,26 @@ def botonD():
 def continuar():
     global answer, historia, nodoActual
     answer = ''
-    deci = nodoActual.decision()
-    nodoActual = historia.conseguirArco(deci[answer])
+    print(nodoActual[answer])
+    print(nodoActual)
+    deci = nodoActual[answer]
+    nodoActual = historia.conseguirArco(deci)
     update(nodoActual[1])
 
 
 def update(name):
-    global answer, historia, nodoActual
+    global answer, historia, nodoActual,fin
     nodoActual = historia.conseguirArco(name)
-
-    t = threading.Thread(target=reproducir, args=(nodoActual[0].reproducirSonido(),nodoActual[0],))
-    t.start()
+    if(fin != 1):
+        source, position = nodoActual[0].reproducirSonido()
+        t = threading.Thread(target=reproducir, args=(source,nodoActual[0],position))
+        t.start()
+    else:
+        ui.pushButton.setEnabled(False)
+        ui.pushButton_2.setEnabled(False)
+        ui.pushButton_3.setEnabled(False)
+        ui.pushButton_4.setEnabled(False)
+        ui.pushButton_5.setEnabled(False)
 
 
 
@@ -371,13 +397,14 @@ if __name__ == "__main__":
     ui.pushButton_2.clicked.connect(botonB)
     ui.pushButton_3.clicked.connect(botonC)
     ui.pushButton_4.clicked.connect(botonD)
-
+    ui.pushButton_5.clicked.connect(continuar)
+    fin = 0
     ##Seccion se llena el arbol con la historia
     cargarHistoria()
     update("Despertarse")
 
 
     #while Historia.end() != True:
-
-
-    sys.exit(app.exec_())
+    if(app.exec_() == 0):
+        oalQuit()
+        sys.exit(app.exec_())
